@@ -29,7 +29,7 @@ buttons.forEach(btn => {
 
     // 🔓 Check unlock code
     if (current === SECRET_CODE) {
-      window.location.href = "hub.html";
+      window.location.href = "proxy.html";
       return;
     }
 
