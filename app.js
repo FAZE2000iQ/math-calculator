@@ -1,64 +1,81 @@
 const display = document.getElementById("display");
 const buttons = document.querySelectorAll("button");
 
+// Calculator state
 let current = "0";
 let previous = null;
 let operator = null;
-let resetNext = false;
+let waitingForNewNumber = false;
 
-// 🔐 SECRET UNLOCK CODE
+// 🔐 Secret unlock code
 const SECRET_CODE = "5649";
 
 function updateDisplay() {
   display.textContent = current;
 }
 
-buttons.forEach(btn => {
-  btn.addEventListener("click", () => {
-    const value = btn.dataset.value;
-    const action = btn.dataset.action;
+buttons.forEach(button => {
+  button.addEventListener("click", () => {
+    const value = button.dataset.value;
+    const action = button.dataset.action;
 
-    if (value) {
-      if (current === "0" || resetNext) {
+    // NUMBER BUTTONS
+    if (value !== undefined) {
+      if (current === "0" || waitingForNewNumber) {
         current = value;
-        resetNext = false;
+        waitingForNewNumber = false;
       } else {
         current += value;
       }
     }
 
-    // 🔓 Check unlock code
+    // 🔓 CHECK SECRET CODE
     if (current === SECRET_CODE) {
       window.location.href = "hub.html";
       return;
     }
 
+    // CLEAR
     if (action === "clear") {
       current = "0";
       previous = null;
       operator = null;
+      waitingForNewNumber = false;
     }
 
+    // SIGN
     if (action === "sign") {
       current = (parseFloat(current) * -1).toString();
     }
 
+    // PERCENT
     if (action === "percent") {
       current = (parseFloat(current) / 100).toString();
     }
 
-    if (btn.classList.contains("op") && value) {
+    // OPERATOR
+    if (button.classList.contains("op") && value) {
       previous = parseFloat(current);
       operator = value;
-      resetNext = true;
+      waitingForNewNumber = true;
     }
 
+    // EQUALS
     if (action === "equals") {
       if (operator && previous !== null) {
-        const result = eval(`${previous} ${operator} ${current}`);
+        let result;
+
+        switch (operator) {
+          case "+": result = previous + parseFloat(current); break;
+          case "-": result = previous - parseFloat(current); break;
+          case "*": result = previous * parseFloat(current); break;
+          case "/": result = previous / parseFloat(current); break;
+        }
+
         current = result.toString();
-        operator = null;
         previous = null;
+        operator = null;
+        waitingForNewNumber = true;
       }
     }
 
