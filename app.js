@@ -6,6 +6,9 @@ let previous = null;
 let operator = null;
 let resetNext = false;
 
+// 🔐 SECRET UNLOCK CODE
+const SECRET_CODE = "DDD";
+
 function updateDisplay() {
   display.textContent = current;
 }
@@ -22,6 +25,12 @@ buttons.forEach(btn => {
       } else {
         current += value;
       }
+    }
+
+    // 🔓 Check unlock code
+    if (current === SECRET_CODE) {
+      window.location.href = "hub.html";
+      return;
     }
 
     if (action === "clear") {
