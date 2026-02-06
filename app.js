@@ -7,7 +7,7 @@ let operator = null;
 let resetNext = false;
 
 // 🔐 SECRET UNLOCK CODE
-const SECRET_CODE = "DDD";
+const SECRET_CODE = "5649";
 
 function updateDisplay() {
   display.textContent = current;
