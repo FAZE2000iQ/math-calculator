@@ -7,30 +7,25 @@
   <style>
     body {
       margin: 0;
-      height: 100vh;
       background: #0f0f0f;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       font-family: -apple-system, BlinkMacSystemFont, sans-serif;
       color: white;
     }
 
-    .box {
-      background: #1a1a1a;
-      padding: 30px;
-      border-radius: 14px;
-      width: 340px;
-      text-align: center;
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
     }
 
     h1 {
-      margin-bottom: 18px;
-      font-size: 22px;
+      margin-bottom: 15px;
     }
 
     input {
-      width: 100%;
+      width: 80%;
+      max-width: 500px;
       padding: 12px;
       border-radius: 10px;
       border: none;
@@ -41,9 +36,8 @@
     }
 
     button {
-      margin-top: 15px;
-      width: 100%;
-      padding: 12px;
+      margin-top: 10px;
+      padding: 12px 25px;
       border-radius: 10px;
       border: none;
       font-size: 16px;
@@ -55,30 +49,42 @@
     button:hover {
       background: #555;
     }
+
+    iframe {
+      margin-top: 20px;
+      width: 90%;
+      height: 500px;
+      border: none;
+      border-radius: 10px;
+    }
   </style>
 </head>
 <body>
 
-  <div class="box">
+  <div class="container">
     <h1>Search the Web</h1>
 
     <input
       id="query"
       type="text"
-      placeholder="Search..."
+      placeholder="Type your search..."
       onkeydown="if(event.key==='Enter') search()"
     />
 
     <button onclick="search()">Search</button>
+
+    <!-- Results will show here -->
+    <iframe id="results" src=""></iframe>
   </div>
 
   <script>
     function search() {
-      const q = document.getElementById("query").value.trim();
-      if (!q) return;
+      const query = document.getElementById("query").value.trim();
+      if (!query) return;
 
-      const url = "https://duckduckgo.com/?q=" + encodeURIComponent(q);
-      window.open(url, "_blank");
+      // Use DuckDuckGo HTML version inside iframe
+      const url = "https://lite.duckduckgo.com/lite/?q=" + encodeURIComponent(query);
+      document.getElementById("results").src = url;
     }
   </script>
 
