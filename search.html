@@ -1,1 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Search</title>
 
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background: #0f0f0f;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      color: white;
+    }
+
+    .box {
+      background: #1a1a1a;
+      padding: 30px;
+      border-radius: 14px;
+      width: 340px;
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 18px;
+      font-size: 22px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      font-size: 16px;
+      outline: none;
+      background: #2a2a2a;
+      color: white;
+    }
+
+    button {
+      margin-top: 15px;
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+      background: #3a3a3a;
+      color: white;
+    }
+
+    button:hover {
+      background: #555;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="box">
+    <h1>Search the Web</h1>
+
+    <input
+      id="query"
+      type="text"
+      placeholder="Search..."
+      onkeydown="if(event.key==='Enter') search()"
+    />
+
+    <button onclick="search()">Search</button>
+  </div>
+
+  <script>
+    function search() {
+      const q = document.getElementById("query").value.trim();
+      if (!q) return;
+
+      const url = "https://duckduckgo.com/?q=" + encodeURIComponent(q);
+      window.open(url, "_blank");
+    }
+  </script>
+
+</body>
+</html>
