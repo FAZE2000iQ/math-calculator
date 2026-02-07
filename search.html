@@ -1,23 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Search the WEB</title>
-
+  <meta charset="UTF-8">
+  <title>search the WEB</title>
   <style>
     body {
       margin: 0;
       background: #0f0f0f;
       font-family: -apple-system, BlinkMacSystemFont, sans-serif;
       color: white;
-    }
-
-    .container {
       display: flex;
       flex-direction: column;
       align-items: center;
       padding: 20px;
-      min-height: 100vh;
     }
 
     h1 {
@@ -25,131 +20,56 @@
     }
 
     input {
-      width: 80%;
-      max-width: 500px;
-      padding: 12px;
+      padding: 10px 15px;
+      font-size: 16px;
       border-radius: 10px;
       border: none;
-      font-size: 16px;
-      outline: none;
-      background: #2a2a2a;
-      color: white;
+      width: 300px;
+      margin-bottom: 20px;
     }
 
-    button {
-      margin-top: 10px;
-      padding: 12px 25px;
-      border-radius: 10px;
-      border: none;
-      font-size: 16px;
-      cursor: pointer;
-      background: #3a3a3a;
-      color: white;
-    }
-
-    button:hover {
-      background: #555;
-    }
-
-    .results {
-      margin-top: 25px;
+    iframe {
       width: 90%;
-      max-width: 700px;
+      max-width: 800px;
+      height: 500px;
+      border: none;
+      border-radius: 12px;
+      margin-top: 10px;
     }
 
-    .result-item {
-      background: #1a1a1a;
-      padding: 12px;
-      border-radius: 10px;
-      margin-bottom: 12px;
-    }
-
-    .result-item a {
-      color: #1e90ff;
-      text-decoration: none;
-      font-weight: bold;
-    }
-
-    .result-item a:hover {
-      text-decoration: underline;
-    }
-
-    .result-item p {
-      margin: 5px 0 0 0;
+    .info {
+      margin-bottom: 10px;
       font-size: 14px;
-      color: #ccc;
+      color: #aaa;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Search the Web</h1>
 
-    <input
-      id="query"
-      type="text"
-      placeholder="Type your search..."
-      onkeydown="if(event.key==='Enter') search()"
-    />
+  <h1>🌐 Website Viewer</h1>
+  <div class="info">Type a website URL and press Enter (https:// will be added automatically)</div>
+  
+  <input type="text" id="urlInput" placeholder="example.com or https://example.com">
 
-    <button onclick="search()">Search</button>
-
-    <div class="results" id="results"></div>
-  </div>
+  <iframe id="siteFrame" src=""></iframe>
 
   <script>
-    async function search() {
-      const query = document.getElementById("query").value.trim();
-      const resultsDiv = document.getElementById("results");
-      resultsDiv.innerHTML = ""; // clear previous results
+    const input = document.getElementById('urlInput');
+    const iframe = document.getElementById('siteFrame');
 
-      if (!query) return;
+    input.addEventListener('keypress', function(event) {
+      if (event.key === 'Enter') {
+        let url = input.value.trim();
 
-      try {
-        const response = await fetch(
-          `https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&no_html=1&skip_disambig=1`
-        );
-
-        const data = await response.json();
-
-        // Main text result
-        if (data.AbstractText) {
-          const div = document.createElement("div");
-          div.className = "result-item";
-          div.innerHTML = `<p>${data.AbstractText}</p>`;
-          resultsDiv.appendChild(div);
+        // Add https:// automatically if not present
+        if (!url.startsWith('http://') && !url.startsWith('https://')) {
+          url = 'https://' + url;
         }
 
-        // Related Topics
-        if (data.RelatedTopics && data.RelatedTopics.length > 0) {
-          data.RelatedTopics.forEach(topic => {
-            if (topic.Text && topic.FirstURL) {
-              const div = document.createElement("div");
-              div.className = "result-item";
-              div.innerHTML = `<a href="${topic.FirstURL}" target="_blank">${topic.Text}</a>`;
-              resultsDiv.appendChild(div);
-            } else if (topic.Topics) {
-              topic.Topics.forEach(sub => {
-                if (sub.Text && sub.FirstURL) {
-                  const div = document.createElement("div");
-                  div.className = "result-item";
-                  div.innerHTML = `<a href="${sub.FirstURL}" target="_blank">${sub.Text}</a>`;
-                  resultsDiv.appendChild(div);
-                }
-              });
-            }
-          });
-        }
-
-        if (!resultsDiv.hasChildNodes()) {
-          resultsDiv.innerHTML = "<p>No results found.</p>";
-        }
-
-      } catch (err) {
-        console.error(err);
-        resultsDiv.innerHTML = "<p>Error fetching results.</p>";
+        iframe.src = url;
       }
-    }
+    });
   </script>
+
 </body>
 </html>
