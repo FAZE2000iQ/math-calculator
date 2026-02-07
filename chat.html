@@ -1,1 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Chat</title>
 
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
+<style>
+body {
+  margin: 0;
+  background: #0b0b3a;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  color: white;
+}
+
+.chat-container {
+  max-width: 600px;
+  margin: auto;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.messages {
+  flex: 1;
+  padding: 15px;
+  overflow-y: auto;
+}
+
+.message {
+  background: #1a1a4d;
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 8px;
+}
+
+.input-bar {
+  display: flex;
+  padding: 10px;
+  background: #111;
+}
+
+input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+}
+
+button {
+  margin-left: 10px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: none;
+  background: #3a3aff;
+  color: white;
+  cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+<div class="chat-container">
+  <div class="messages" id="messages"></div>
+
+  <div class="input-bar">
+    <input id="messageInput" placeholder="Type a message..." />
+    <button onclick="sendMessage()">Send</button>
+  </div>
+</div>
+
+<script>
+const supabase = window.supabase.createClient(
+  "https://rnqiusnbgwkvtcvazmly.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJucWl1c25iZ3drdnRjdm
+  F6bWx5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0MjA2MjEsImV4cCI6MjA4NTk5NjYyMX0.NWv741j_Np2V6LBEtT6adgnGRsMc1-n04rg66OWUhUs"
+);
+
+const messagesDiv = document.getElementById("messages");
+
+async function loadMessages() {
+  const { data } = await supabase
+    .from("messages")
+    .select("*")
+    .order("created_at", { ascending: true });
+
+  messagesDiv.innerHTML = "";
+  data.forEach(msg => addMessage(msg.text));
+}
+
+function addMessage(text) {
+  const div = document.createElement("div");
+  div.className = "message";
+  div.textContent = text;
+  messagesDiv.appendChild(div);
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
+
+async function sendMessage() {
+  const input = document.getElementById("messageInput");
+  const text = input.value.trim();
+  if (!text) return;
+
+  await supabase.from("messages").insert({ text });
+  input.value = "";
+}
+
+supabase
+  .channel("chat")
+  .on(
+    "postgres_changes",
+    { event: "INSERT", schema: "public", table: "messages" },
+    payload => addMessage(payload.new.text)
+  )
+  .subscribe();
+
+loadMessages();
+</script>
+</body>
+</html>
