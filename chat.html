@@ -1,178 +1,183 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Chat</title>
+  <meta charset="UTF-8" />
+  <title>Site Chat</title>
 
-<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <!-- Supabase -->
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
-<style>
-body {
-  margin: 0;
-  background: #0b0b3a;
-  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-  color: white;
-}
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont;
+      background: #121212;
+      color: white;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
 
-.chat-container {
-  max-width: 600px;
-  margin: auto;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
+    header {
+      background: #1e1e1e;
+      padding: 12px;
+      text-align: center;
+      font-weight: bold;
+    }
 
-.messages {
-  flex: 1;
-  padding: 15px;
-  overflow-y: auto;
-}
+    #messages {
+      flex: 1;
+      padding: 10px;
+      overflow-y: auto;
+    }
 
-.message {
-  background: #1a1a4d;
-  padding: 10px;
-  border-radius: 10px;
-  margin-bottom: 8px;
-}
+    .msg {
+      margin-bottom: 8px;
+    }
 
-.username {
-  font-weight: bold;
-  margin-right: 5px;
-}
+    .user {
+      font-weight: bold;
+      margin-right: 5px;
+    }
 
-.input-bar {
-  display: flex;
-  padding: 10px;
-  background: #111;
-}
+    #inputArea {
+      display: flex;
+      padding: 10px;
+      background: #1e1e1e;
+    }
 
-input {
-  flex: 1;
-  padding: 10px;
-  border-radius: 8px;
-  border: none;
-  outline: none;
-}
+    input {
+      flex: 1;
+      padding: 8px;
+      border-radius: 6px;
+      border: none;
+      outline: none;
+    }
 
-button {
-  margin-left: 10px;
-  padding: 10px 16px;
-  border-radius: 8px;
-  border: none;
-  background: #3a3aff;
-  color: white;
-  cursor: pointer;
-}
+    button {
+      margin-left: 8px;
+      padding: 8px 14px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      background: #007aff;
+      color: white;
+      font-weight: bold;
+    }
 
-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
 
-/* Username modal */
-#usernameModal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.8);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+    /* ===== USERNAME MODAL ===== */
+    #usernameModal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      pointer-events: auto;
+    }
 
-.modal-box {
-  background: #1a1a4d;
-  padding: 20px;
-  border-radius: 12px;
-  width: 280px;
-  text-align: center;
-}
-</style>
+    #usernameBox {
+      background: #1e1e1e;
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+      width: 280px;
+    }
+
+    #usernameBox input {
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    #usernameBox button {
+      width: 100%;
+      margin-top: 12px;
+    }
+  </style>
 </head>
-
 <body>
 
-<!-- Username prompt -->
+<header>Site Chat</header>
+
+<div id="messages"></div>
+
+<div id="inputArea">
+  <input id="messageInput" placeholder="Type a message..." disabled />
+  <button id="sendBtn" disabled>Send</button>
+</div>
+
+<!-- USERNAME MODAL -->
 <div id="usernameModal">
-  <div class="modal-box">
+  <div id="usernameBox">
     <h3>Select a username</h3>
     <input id="usernameInput" placeholder="Username" />
-    <br><br>
     <button onclick="setUsername()">Join Chat</button>
   </div>
 </div>
 
-<div class="chat-container">
-  <div class="messages" id="messages"></div>
-
-  <div class="input-bar">
-    <input id="messageInput" placeholder="Type a message..." disabled />
-    <button id="sendBtn" onclick="sendMessage()" disabled>Send</button>
-  </div>
-</div>
-
 <script>
-const supabase = window.supabase.createClient(
-  "https://rnqiusnbgwkvtcvazmly.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJucWl1c25iZ3drdnRjdmF6bWx5Iiwicm9sZSI6ImFub24iLCJpYXQ
-  iOjE3NzA0MjA2MjEsImV4cCI6MjA4NTk5NjYyMX0.NWv741j_Np2V6LBEtT6adgnGRsMc1-n04rg66OWUhUs"
-);
+  // 🔴 REPLACE THESE TWO VALUES
+  const SUPABASE_URL = "https://rnqiusnbgwkvtcvazmly.supabase.co";
+  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJucWl1c25iZ3drdnRjdmF6bWx5Iiwicm9sZSI6
+    ImFub24iLCJpYXQiOjE3NzA
+    0MjA2MjEsImV4cCI6MjA4NTk5NjYyMX0.NWv741j_Np2V6LBEtT6adgnGRsMc1-n04rg66OWUhUs";
 
-let username = null;
-const messagesDiv = document.getElementById("messages");
-const msgInput = document.getElementById("messageInput");
-const sendBtn = document.getElementById("sendBtn");
+  const supabase = supabasejs.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
 
-function setUsername() {
-  const input = document.getElementById("usernameInput");
-  const name = input.value.trim();
-  if (!name) return;
+  let username = null;
 
-  username = name;
-  document.getElementById("usernameModal").style.display = "none";
-  msgInput.disabled = false;
-  sendBtn.disabled = false;
-}
+  const messagesDiv = document.getElementById("messages");
+  const messageInput = document.getElementById("messageInput");
+  const sendBtn = document.getElementById("sendBtn");
 
-function addMessage(user, text) {
-  const div = document.createElement("div");
-  div.className = "message";
-  div.innerHTML = `<span class="username">${user}:</span> ${text}`;
-  messagesDiv.appendChild(div);
-  messagesDiv.scrollTop = messagesDiv.scrollHeight;
-}
+  function addMessage(user, text) {
+    const div = document.createElement("div");
+    div.className = "msg";
+    div.innerHTML = `<span class="user">${user}:</span>${text}`;
+    messagesDiv.appendChild(div);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  }
 
-async function loadMessages() {
-  const { data } = await supabase
-    .from("messages")
-    .select("*")
-    .order("created_at", { ascending: true });
+  async function setUsername() {
+    const input = document.getElementById("usernameInput");
+    if (!input.value.trim()) return;
 
-  messagesDiv.innerHTML = "";
-  data.forEach(msg => addMessage(msg.username, msg.text));
-}
+    username = input.value.trim();
+    document.getElementById("usernameModal").style.display = "none";
+    messageInput.disabled = false;
+    sendBtn.disabled = false;
+  }
 
-async function sendMessage() {
-  const text = msgInput.value.trim();
-  if (!text || !username) return;
+  sendBtn.onclick = async () => {
+    if (!messageInput.value.trim()) return;
 
-  await supabase.from("messages").insert({
-    text,
-    username
-  });
+    await supabase.from("messages").insert({
+      user: username,
+      text: messageInput.value
+    });
 
-  msgInput.value = "";
-}
+    messageInput.value = "";
+  };
 
-supabase
-  .channel("chat")
-  .on(
-    "postgres_changes",
-    { event: "INSERT", schema: "public", table: "messages" },
-    payload => addMessage(payload.new.username, payload.new.text)
-  )
-  .subscribe();
-
-loadMessages();
+  supabase
+    .channel("chat")
+    .on(
+      "postgres_changes",
+      { event: "INSERT", schema: "public", table: "messages" },
+      payload => {
+        addMessage(payload.new.user, payload.new.text);
+      }
+    )
+    .subscribe();
 </script>
 
 </body>
