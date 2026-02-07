@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>This site can’t be reached</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #fff;
+  color: #202124;
+  padding: 40px;
+}
+h1 { font-size: 22px; }
+.code { color: #5f6368; font-size: 14px; }
+</style>
+</head>
+<body>
+
+<h1>This site can’t be reached</h1>
+<p>The webpage might be temporarily down or it may have moved permanently.</p>
+<p class="code">ERR_CONNECTION_REFUSED</p>
+
+<script>
+let buffer = "";
+const SECRET = "collinthegoat";
+
+document.addEventListener("keydown", e => {
+  if (e.key.length === 1) {
+    buffer += e.key.toLowerCase();
+    buffer = buffer.slice(-SECRET.length);
+    if (buffer === SECRET) {
+      window.location.href = "index.html";
+    }
+  }
+});
+</script>
+
+</body>
+</html>
