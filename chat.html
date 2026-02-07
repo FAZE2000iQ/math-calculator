@@ -38,47 +38,16 @@
     button:hover {
       background: #444;
     }
-
-    iframe {
-      width: 90%;
-      max-width: 800px;
-      height: 500px;
-      border: none;
-      border-radius: 12px;
-    }
   </style>
 </head>
 <body>
 
-  <h1>🎮 Games Hub</h1>
+  <h1>Chatting sites</h1>
 
   <div class="menu">
-    <button onclick="loadGame('snake')">Discord</button>
+    <button onclick="window.open('https://discord.com/login/?scrlcbp=.', '_blank')">Discord</button>
     <button onclick="location.href='hub.html'">⬅ Back</button>
   </div>
-
-
-
-  <script>
-    function loadGame(name) {
-      const iframe = document.getElementById("gameFrame");
-
-      // Map game name to URL
-      let url = '';
-      switch(name) {
-        case 'snake':
-          url = 'https://discord.com/login/?scrlcbp=.'; // example HTML5 snake game
-          break;
-        // Open the site in a new tab
-        window.open(url, '_blank');
-
-        // Optionally, clear the input
-        input.value = '';
-      }
-
-      iframe.src = url;
-    }
-  </script>
 
 </body>
 </html>
