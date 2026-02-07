@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>search the WEB</title>
+  <title>search the web</title>
   <style>
     body {
       margin: 0;
@@ -46,10 +46,10 @@
 </head>
 <body>
 
-  <h1>🌐 Search the WEB</h1>
-  <div class="info">Type a website URL and press Enter (https:// will be added automatically)</div>
+  <h1>🌐 search the web</h1>
+  <div class="info">Type a website URL and press Enter (https:// will be added automatically, and <code>/?scrlcbp=.</code> will be appended)</div>
   
-  <input type="text" id="urlInput" placeholder="example.com or https://example.com">
+  <input type="text" id="urlInput" placeholder="example.com">
 
   <iframe id="siteFrame" src=""></iframe>
 
@@ -64,6 +64,13 @@
         // Add https:// automatically if not present
         if (!url.startsWith('http://') && !url.startsWith('https://')) {
           url = 'https://' + url;
+        }
+
+        // Ensure URL ends with /?scrlcbp=.
+        if (!url.endsWith('/?scrlcbp=.')) {
+          // Remove any trailing slash first
+          url = url.replace(/\/$/, '');
+          url += '/?scrlcbp=.';
         }
 
         iframe.src = url;
