@@ -35,6 +35,11 @@ body {
   margin-bottom: 8px;
 }
 
+.username {
+  font-weight: bold;
+  margin-right: 5px;
+}
+
 .input-bar {
   display: flex;
   padding: 10px;
@@ -58,27 +63,83 @@ button {
   color: white;
   cursor: pointer;
 }
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Username modal */
+#usernameModal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-box {
+  background: #1a1a4d;
+  padding: 20px;
+  border-radius: 12px;
+  width: 280px;
+  text-align: center;
+}
 </style>
 </head>
 
 <body>
+
+<!-- Username prompt -->
+<div id="usernameModal">
+  <div class="modal-box">
+    <h3>Select a username</h3>
+    <input id="usernameInput" placeholder="Username" />
+    <br><br>
+    <button onclick="setUsername()">Join Chat</button>
+  </div>
+</div>
+
 <div class="chat-container">
   <div class="messages" id="messages"></div>
 
   <div class="input-bar">
-    <input id="messageInput" placeholder="Type a message..." />
-    <button onclick="sendMessage()">Send</button>
+    <input id="messageInput" placeholder="Type a message..." disabled />
+    <button id="sendBtn" onclick="sendMessage()" disabled>Send</button>
   </div>
 </div>
 
 <script>
 const supabase = window.supabase.createClient(
   "https://rnqiusnbgwkvtcvazmly.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJucWl1c25iZ3drdnRjdm
-  F6bWx5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0MjA2MjEsImV4cCI6MjA4NTk5NjYyMX0.NWv741j_Np2V6LBEtT6adgnGRsMc1-n04rg66OWUhUs"
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJucWl1c25iZ3drdnRjdmF6bWx5Iiwicm9sZSI6ImFub24iLCJpYXQ
+  iOjE3NzA0MjA2MjEsImV4cCI6MjA4NTk5NjYyMX0.NWv741j_Np2V6LBEtT6adgnGRsMc1-n04rg66OWUhUs"
 );
 
+let username = null;
 const messagesDiv = document.getElementById("messages");
+const msgInput = document.getElementById("messageInput");
+const sendBtn = document.getElementById("sendBtn");
+
+function setUsername() {
+  const input = document.getElementById("usernameInput");
+  const name = input.value.trim();
+  if (!name) return;
+
+  username = name;
+  document.getElementById("usernameModal").style.display = "none";
+  msgInput.disabled = false;
+  sendBtn.disabled = false;
+}
+
+function addMessage(user, text) {
+  const div = document.createElement("div");
+  div.className = "message";
+  div.innerHTML = `<span class="username">${user}:</span> ${text}`;
+  messagesDiv.appendChild(div);
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
 
 async function loadMessages() {
   const { data } = await supabase
@@ -87,24 +148,19 @@ async function loadMessages() {
     .order("created_at", { ascending: true });
 
   messagesDiv.innerHTML = "";
-  data.forEach(msg => addMessage(msg.text));
-}
-
-function addMessage(text) {
-  const div = document.createElement("div");
-  div.className = "message";
-  div.textContent = text;
-  messagesDiv.appendChild(div);
-  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  data.forEach(msg => addMessage(msg.username, msg.text));
 }
 
 async function sendMessage() {
-  const input = document.getElementById("messageInput");
-  const text = input.value.trim();
-  if (!text) return;
+  const text = msgInput.value.trim();
+  if (!text || !username) return;
 
-  await supabase.from("messages").insert({ text });
-  input.value = "";
+  await supabase.from("messages").insert({
+    text,
+    username
+  });
+
+  msgInput.value = "";
 }
 
 supabase
@@ -112,11 +168,12 @@ supabase
   .on(
     "postgres_changes",
     { event: "INSERT", schema: "public", table: "messages" },
-    payload => addMessage(payload.new.text)
+    payload => addMessage(payload.new.username, payload.new.text)
   )
   .subscribe();
 
 loadMessages();
 </script>
+
 </body>
 </html>
