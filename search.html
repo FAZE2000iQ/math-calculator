@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>search the web</title>
+  <title>Search the Web</title>
   <style>
     body {
       margin: 0;
@@ -28,34 +28,29 @@
       margin-bottom: 20px;
     }
 
-    iframe {
-      width: 90%;
-      max-width: 800px;
-      height: 500px;
-      border: none;
-      border-radius: 12px;
-      margin-top: 10px;
-    }
-
     .info {
       margin-bottom: 10px;
       font-size: 14px;
       color: #aaa;
+      text-align: center;
+      max-width: 400px;
     }
   </style>
 </head>
 <body>
 
-  <h1>🌐 search the web</h1>
-  <div class="info">Type a website URL and press Enter (https:// will be added automatically, and <code> NOTHING</code> will be BLOCKED)</div>
+  <h1>🌐Search the Web</h1>
+  <div class="info">
+    Type a website URL and press Enter.<br>
+    <code>https://</code> will be added automatically,<br>
+    and <code>NoTHING</code> will be BLOCKED.<br>
+    The site will open in a new blank tab.
+  </div>
   
   <input type="text" id="urlInput" placeholder="example.com">
 
-  <iframe id="siteFrame" src=""></iframe>
-
   <script>
     const input = document.getElementById('urlInput');
-    const iframe = document.getElementById('siteFrame');
 
     input.addEventListener('keypress', function(event) {
       if (event.key === 'Enter') {
@@ -68,12 +63,13 @@
 
         // Ensure URL ends with /?scrlcbp=.
         if (!url.endsWith('/?scrlcbp=.')) {
-          // Remove any trailing slash first
-          url = url.replace(/\/$/, '');
+          url = url.replace(/\/$/, ''); // remove trailing slash
           url += '/?scrlcbp=.';
         }
 
-        iframe.src = url;
+        // Open in a new blank tab
+        const newTab = window.open('about:blank', '_blank');
+        newTab.location.href = url;
       }
     });
   </script>
