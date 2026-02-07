@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Games</title>
+  <title>CHAT</title>
   <style>
     body {
       margin: 0;
@@ -53,9 +53,7 @@
   <h1>🎮 Games Hub</h1>
 
   <div class="menu">
-    <button onclick="loadGame('snake')">Bijeet</button>
-    <button onclick="loadGame('tetris')">Gn-math</button>
-    <button onclick="loadGame('pacman')">KSFI</button>
+    <button onclick="loadGame('snake')">Discord</button>
     <button onclick="location.href='hub.html'">⬅ Back</button>
   </div>
 
@@ -69,14 +67,9 @@
       let url = '';
       switch(name) {
         case 'snake':
-          url = 'https://discord.com/login/'; // example HTML5 snake game
+          url = 'https://discord.com/login'; // example HTML5 snake game
           break;
-        case 'tetris':
-          url = 'https://gn-math-t.github.io/?scrlcbp=category=Education&blocked.html=false&54.212.166.222=true'; // example Tetris
-          break;
-        case 'pacman':
-          url = 'https://graphing-calculator.app'; // Pac-Man demo
-          break;
+       
       }
 
       iframe.src = url;
