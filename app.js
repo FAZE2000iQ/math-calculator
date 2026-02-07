@@ -8,7 +8,7 @@ let operator = null;
 let waitingForNewNumber = false;
 
 // 🔐 Secret unlock code
-const SECRET_CODE = "5649";
+const SECRET_CODE = "9408";
 
 function updateDisplay() {
   display.textContent = current;
