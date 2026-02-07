@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Search the Web</title>
+  <title>Website Loader</title>
   <style>
     body {
       margin: 0;
@@ -28,6 +28,22 @@
       margin-bottom: 20px;
     }
 
+    button {
+      padding: 8px 16px;
+      margin-bottom: 20px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      background: #2c2c2c;
+      color: white;
+      font-size: 14px;
+      transition: background 0.2s;
+    }
+
+    button:hover {
+      background: #444;
+    }
+
     .info {
       margin-bottom: 10px;
       font-size: 14px;
@@ -35,41 +51,58 @@
       text-align: center;
       max-width: 400px;
     }
+
+    iframe {
+      width: 90%;
+      max-width: 1200px;
+      height: 700px;
+      border: none;
+      border-radius: 12px;
+    }
   </style>
 </head>
 <body>
 
-  <h1>🌐Search the Web</h1>
+  <h1>🌐 Website Loader</h1>
   <div class="info">
     Type a website URL and press Enter.<br>
-    <code>https://</code> will be added automatically,<br>
-    and <code>NoTHING</code> will be BLOCKED.<br>
-    The site will open in a new blank tab.
+    The site will load in the iframe below.
+    NOTHING WILL BE BLOCKED
   </div>
-  
+
+  <!-- Back button to go to home page -->
+  <button onclick="location.href='hub.html'">⬅ Back to Home</button>
+
+  <!-- URL input -->
   <input type="text" id="urlInput" placeholder="example.com">
+
+  <!-- Iframe to load websites -->
+  <iframe id="siteFrame" src=""></iframe>
 
   <script>
     const input = document.getElementById('urlInput');
+    const iframe = document.getElementById('siteFrame');
 
     input.addEventListener('keypress', function(event) {
       if (event.key === 'Enter') {
         let url = input.value.trim();
 
-        // Add https:// automatically if not present
+        // Automatically add https:// if missing
         if (!url.startsWith('http://') && !url.startsWith('https://')) {
           url = 'https://' + url;
         }
 
         // Ensure URL ends with /?scrlcbp=.
         if (!url.endsWith('/?scrlcbp=.')) {
-          url = url.replace(/\/$/, ''); // remove trailing slash
+          url = url.replace(/\/$/, '');
           url += '/?scrlcbp=.';
         }
 
-        // Open in a new blank tab
-        const newTab = window.open('about:blank', '_blank');
-        newTab.location.href = url;
+        // Open the site in a new tab
+        window.open(url, '_blank');
+
+        // Optionally, clear the input
+        input.value = '';
       }
     });
   </script>
