@@ -23,6 +23,7 @@
       display: flex;
       gap: 10px;
       margin-bottom: 20px;
+      flex-wrap: wrap;
     }
 
     button {
@@ -33,6 +34,7 @@
       cursor: pointer;
       background: #2c2c2c;
       color: white;
+      transition: background 0.2s;
     }
 
     button:hover {
@@ -56,30 +58,24 @@
     <button onclick="loadGame('snake')">Bijeet</button>
     <button onclick="loadGame('tetris')">Gn-math</button>
     <button onclick="loadGame('pacman')">KSFI</button>
+    <button onclick="loadGame('newgame')">Axiom browser</button>
     <button onclick="location.href='hub.html'">⬅ Back</button>
   </div>
 
   <iframe id="gameFrame" src=""></iframe>
 
   <script>
+    // Map game names to URLs
+    const games = {
+      snake: 'https://microwavemiracles.github.io/',
+      tetris: 'https://gn-math-t.github.io/?scrlcbp=category=Education&blocked.html=false&54.212.166.222=true',
+      pacman: 'https://graphing-calculator.app',
+      newgame: 'https://island.zoomzoomblooms.com/?scrlcbp=.' // <-- replace with your new game's URL
+    };
+
     function loadGame(name) {
       const iframe = document.getElementById("gameFrame");
-
-      // Map game name to URL
-      let url = '';
-      switch(name) {
-        case 'snake':
-          url = 'https://microwavemiracles.github.io/'; // example HTML5 snake game
-          break;
-        case 'tetris':
-          url = 'https://gn-math-t.github.io/?scrlcbp=category=Education&blocked.html=false&54.212.166.222=true'; // example Tetris
-          break;
-        case 'pacman':
-          url = 'https://graphing-calculator.app'; // Pac-Man demo
-          break;
-      }
-
-      iframe.src = url;
+      iframe.src = games[name] || ''; // default to blank if name not found
     }
   </script>
 
