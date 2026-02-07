@@ -1,183 +1,189 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Site Chat</title>
+<meta charset="UTF-8">
+<title>Chat</title>
 
-  <!-- Supabase -->
-  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
-  <style>
-    body {
-      margin: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont;
-      background: #121212;
-      color: white;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
+<style>
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system;
+  background: #121212;
+  color: white;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
 
-    header {
-      background: #1e1e1e;
-      padding: 12px;
-      text-align: center;
-      font-weight: bold;
-    }
+header {
+  background: #1e1e1e;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 
-    #messages {
-      flex: 1;
-      padding: 10px;
-      overflow-y: auto;
-    }
+header button {
+  background: #333;
+  border: none;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
 
-    .msg {
-      margin-bottom: 8px;
-    }
+#messages {
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto;
+}
 
-    .user {
-      font-weight: bold;
-      margin-right: 5px;
-    }
+.msg {
+  margin-bottom: 6px;
+}
 
-    #inputArea {
-      display: flex;
-      padding: 10px;
-      background: #1e1e1e;
-    }
+.user {
+  font-weight: bold;
+  margin-right: 4px;
+}
 
-    input {
-      flex: 1;
-      padding: 8px;
-      border-radius: 6px;
-      border: none;
-      outline: none;
-    }
+#inputArea {
+  display: flex;
+  padding: 10px;
+  background: #1e1e1e;
+}
 
-    button {
-      margin-left: 8px;
-      padding: 8px 14px;
-      border-radius: 6px;
-      border: none;
-      cursor: pointer;
-      background: #007aff;
-      color: white;
-      font-weight: bold;
-    }
+input {
+  flex: 1;
+  padding: 8px;
+  border-radius: 6px;
+  border: none;
+  outline: none;
+}
 
-    button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
+button {
+  margin-left: 8px;
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  background: #007aff;
+  color: white;
+  font-weight: bold;
+}
 
-    /* ===== USERNAME MODAL ===== */
-    #usernameModal {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.85);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-      pointer-events: auto;
-    }
+button:disabled {
+  opacity: 0.5;
+}
 
-    #usernameBox {
-      background: #1e1e1e;
-      padding: 20px;
-      border-radius: 12px;
-      text-align: center;
-      width: 280px;
-    }
+/* MODAL */
+#usernameModal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
 
-    #usernameBox input {
-      width: 100%;
-      margin-top: 10px;
-    }
-
-    #usernameBox button {
-      width: 100%;
-      margin-top: 12px;
-    }
-  </style>
+#usernameBox {
+  background: #1e1e1e;
+  padding: 20px;
+  border-radius: 12px;
+  width: 260px;
+  text-align: center;
+}
+</style>
 </head>
+
 <body>
 
-<header>Site Chat</header>
+<header>
+  <button onclick="location.href='index.html'">← Home</button>
+  <div>Site Chat</div>
+</header>
 
 <div id="messages"></div>
 
 <div id="inputArea">
-  <input id="messageInput" placeholder="Type a message..." disabled />
+  <input id="messageInput" placeholder="Type a message..." disabled>
   <button id="sendBtn" disabled>Send</button>
 </div>
 
-<!-- USERNAME MODAL -->
 <div id="usernameModal">
   <div id="usernameBox">
-    <h3>Select a username</h3>
-    <input id="usernameInput" placeholder="Username" />
-    <button onclick="setUsername()">Join Chat</button>
+    <h3>Choose a username</h3>
+    <input id="usernameInput" placeholder="Username">
+    <button id="joinBtn">Join Chat</button>
   </div>
 </div>
 
 <script>
-  // 🔴 REPLACE THESE TWO VALUES
-  const SUPABASE_URL = "https://rnqiusnbgwkvtcvazmly.supabase.co";
-  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJucWl1c25iZ3drdnRjdmF6bWx5Iiwicm9sZSI6
-    ImFub24iLCJpYXQiOjE3NzA
-    0MjA2MjEsImV4cCI6MjA4NTk5NjYyMX0.NWv741j_Np2V6LBEtT6adgnGRsMc1-n04rg66OWUhUs";
+/* ===== CONFIG ===== */
+const SUPABASE_URL = "https://rnqiusnbgwkvtcvazmly.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJucWl1c25iZ3drdnRjdmF6bWx5Iiwicm9sZSI6I
+  mFub24iLCJpYXQiOjE3NzA0MjA2MjEsImV4cCI6MjA4NTk5NjYyMX0.NWv741j_Np2V6LBEtT6adgnGRsMc1-n04rg66OWUhUs";
 
-  const supabase = supabasejs.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-  );
+const supabase = supabasejs.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
 
-  let username = null;
+/* ===== ELEMENTS ===== */
+const joinBtn = document.getElementById("joinBtn");
+const usernameInput = document.getElementById("usernameInput");
+const modal = document.getElementById("usernameModal");
+const messageInput = document.getElementById("messageInput");
+const sendBtn = document.getElementById("sendBtn");
+const messagesDiv = document.getElementById("messages");
 
-  const messagesDiv = document.getElementById("messages");
-  const messageInput = document.getElementById("messageInput");
-  const sendBtn = document.getElementById("sendBtn");
+let username = "";
 
-  function addMessage(user, text) {
-    const div = document.createElement("div");
-    div.className = "msg";
-    div.innerHTML = `<span class="user">${user}:</span>${text}`;
-    messagesDiv.appendChild(div);
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
-  }
+/* ===== FUNCTIONS ===== */
+function addMessage(user, text) {
+  const div = document.createElement("div");
+  div.className = "msg";
+  div.innerHTML = `<span class="user">${user}:</span>${text}`;
+  messagesDiv.appendChild(div);
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
 
-  async function setUsername() {
-    const input = document.getElementById("usernameInput");
-    if (!input.value.trim()) return;
+/* ===== JOIN BUTTON FIX ===== */
+joinBtn.addEventListener("click", () => {
+  if (!usernameInput.value.trim()) return;
 
-    username = input.value.trim();
-    document.getElementById("usernameModal").style.display = "none";
-    messageInput.disabled = false;
-    sendBtn.disabled = false;
-  }
+  username = usernameInput.value.trim();
+  modal.style.display = "none";
+  messageInput.disabled = false;
+  sendBtn.disabled = false;
+});
 
-  sendBtn.onclick = async () => {
-    if (!messageInput.value.trim()) return;
+/* ===== SEND MESSAGE ===== */
+sendBtn.addEventListener("click", async () => {
+  if (!messageInput.value.trim()) return;
 
-    await supabase.from("messages").insert({
-      user: username,
-      text: messageInput.value
-    });
+  await supabase.from("messages").insert({
+    user: username,
+    text: messageInput.value
+  });
 
-    messageInput.value = "";
-  };
+  messageInput.value = "";
+});
 
-  supabase
-    .channel("chat")
-    .on(
-      "postgres_changes",
-      { event: "INSERT", schema: "public", table: "messages" },
-      payload => {
-        addMessage(payload.new.user, payload.new.text);
-      }
-    )
-    .subscribe();
+/* ===== REALTIME ===== */
+supabase
+  .channel("chat")
+  .on(
+    "postgres_changes",
+    { event: "INSERT", schema: "public", table: "messages" },
+    payload => {
+      addMessage(payload.new.user, payload.new.text);
+    }
+  )
+  .subscribe();
 </script>
 
 </body>
