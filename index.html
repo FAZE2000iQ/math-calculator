@@ -4,43 +4,38 @@
 <meta charset="UTF-8">
 <title>Calculator</title>
 
-<!-- Dynamic favicon -->
-<link id="dynamicFavicon" rel="icon" href="favicon.ico">
+<link rel="icon" href="calculator.ico">
 
 <style>
 body {
-  background: #0f172a;
-  font-family: Arial, sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
   margin: 0;
+  height: 100vh;
+  background: #1c1c1e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-/* Calculator box */
 .calculator {
-  background: #020617;
+  background: #000;
+  border-radius: 28px;
   padding: 20px;
-  border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
   width: 260px;
 }
 
-/* Display */
 #display {
   width: 100%;
-  height: 50px;
-  font-size: 22px;
-  margin-bottom: 12px;
+  height: 60px;
+  background: black;
+  color: white;
+  font-size: 36px;
   text-align: right;
-  padding: 8px;
-  border-radius: 8px;
   border: none;
   outline: none;
+  margin-bottom: 12px;
 }
 
-/* Buttons grid */
 .buttons {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -48,110 +43,102 @@ body {
 }
 
 button {
-  height: 45px;
-  font-size: 16px;
-  border-radius: 8px;
+  height: 50px;
+  border-radius: 50%;
   border: none;
+  font-size: 18px;
   cursor: pointer;
-  background: #1e293b;
+}
+
+.num {
+  background: #333;
   color: white;
 }
 
-button:hover {
-  background: #334155;
+.func {
+  background: #a5a5a5;
+  color: black;
 }
 
-.equal {
+.op {
+  background: #ff9f0a;
+  color: white;
+}
+
+.zero {
   grid-column: span 2;
-  background: #2563eb;
-}
-
-.equal:hover {
-  background: #1d4ed8;
-}
-
-.clear {
-  background: #7c2d12;
-}
-
-.clear:hover {
-  background: #9a3412;
-}
-
-/* Hub button */
-.hub-btn {
-  margin-top: 12px;
-  width: 100%;
-  background: #020617;
-  border: 1px solid #1e293b;
+  border-radius: 25px;
+  text-align: left;
+  padding-left: 20px;
 }
 </style>
-
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  // Apply saved disguise settings
-  const bg = localStorage.getItem("bg");
-  const favicon = localStorage.getItem("favicon");
-  const title = localStorage.getItem("title");
-
-  if (bg) document.body.style.background = bg;
-  if (favicon) document.getElementById("dynamicFavicon").href = favicon;
-  if (title) document.title = title;
-});
-
-function append(value) {
-  document.getElementById("display").value += value;
-}
-
-function clearDisplay() {
-  document.getElementById("display").value = "";
-}
-
-function calculate() {
-  try {
-    document.getElementById("display").value =
-      eval(document.getElementById("display").value);
-  } catch {
-    document.getElementById("display").value = "Error";
-  }
-}
-</script>
 </head>
 
 <body>
 
 <div class="calculator">
-  <input id="display" type="text" readonly>
+  <input id="display" readonly>
 
   <div class="buttons">
-    <button class="clear" onclick="clearDisplay()">C</button>
-    <button onclick="append('/')">÷</button>
-    <button onclick="append('*')">×</button>
-    <button onclick="append('-')">−</button>
+    <button class="func" onclick="clearDisplay()">AC</button>
+    <button class="func">±</button>
+    <button class="func">%</button>
+    <button class="op" onclick="add('/')">÷</button>
 
-    <button onclick="append('7')">7</button>
-    <button onclick="append('8')">8</button>
-    <button onclick="append('9')">9</button>
-    <button onclick="append('+')">+</button>
+    <button class="num" onclick="add('7')">7</button>
+    <button class="num" onclick="add('8')">8</button>
+    <button class="num" onclick="add('9')">9</button>
+    <button class="op" onclick="add('*')">×</button>
 
-    <button onclick="append('4')">4</button>
-    <button onclick="append('5')">5</button>
-    <button onclick="append('6')">6</button>
-    <button onclick="append('.')">.</button>
+    <button class="num" onclick="add('4')">4</button>
+    <button class="num" onclick="add('5')">5</button>
+    <button class="num" onclick="add('6')">6</button>
+    <button class="op" onclick="add('-')">−</button>
 
-    <button onclick="append('1')">1</button>
-    <button onclick="append('2')">2</button>
-    <button onclick="append('3')">3</button>
-    <button class="equal" onclick="calculate()">=</button>
+    <button class="num" onclick="add('1')">1</button>
+    <button class="num" onclick="add('2')">2</button>
+    <button class="num" onclick="add('3')">3</button>
+    <button class="op" onclick="add('+')">+</button>
 
-    <button onclick="append('0')">0</button>
-    <button onclick="append('00')">00</button>
+    <button class="num zero" onclick="add('0')">0</button>
+    <button class="num" onclick="add('.')">.</button>
+    <button class="op" onclick="calculate()">=</button>
   </div>
-
-  <button class="hub-btn" onclick="location.href='hub.html'">
-    Go to Hub
-  </button>
 </div>
+
+<script>
+let buffer = "";
+
+function add(val) {
+  const display = document.getElementById("display");
+  display.value += val;
+  buffer += val;
+
+  // SECRET CODE — DO NOT TOUCH
+  if (buffer.includes("94087")) {
+    window.location.href = "hub.html";
+  }
+
+  if (buffer.length > 10) buffer = buffer.slice(-10);
+}
+
+function clearDisplay() {
+  document.getElementById("display").value = "";
+  buffer = "";
+}
+
+function calculate() {
+  try {
+    const display = document.getElementById("display");
+    display.value = eval(display.value);
+  } catch {
+    document.getElementById("display").value = "Error";
+  }
+}
+</script>
+
+<!-- Global panic key (DOES NOT affect secret code) -->
+<script src="panic.js"></script>
 
 </body>
 </html>
