@@ -50,6 +50,15 @@
       margin-top: 30px;
       text-align: center;
     }
+
+    input {
+      margin-top: 6px;
+      padding: 6px;
+      border-radius: 6px;
+      border: none;
+      width: 220px;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
@@ -62,7 +71,7 @@
     <button onclick="location.href='search.html'">🔍 Search</button>
   </div>
 
-  <!-- ⚙️ SETTINGS SECTION (ADDED) -->
+  <!-- ⚙️ SETTINGS -->
   <div class="settings">
     <h3>Settings</h3>
 
@@ -71,10 +80,20 @@
       <button onclick="applyPreset('docs')">Google Docs</button>
       <button onclick="applyPreset('default')">Default</button>
     </div>
+
+    <!-- 🚨 PANIC SETTINGS -->
+    <div style="margin-top:20px;">
+      <h4>Panic Button</h4>
+      <input id="panicKey" placeholder="Panic key (ex: ` or Escape)">
+      <br>
+      <input id="panicUrl" placeholder="Panic URL (ex: https://classroom.google.com)">
+      <br><br>
+      <button onclick="savePanic()">Save Panic Settings</button>
+    </div>
   </div>
 
   <script>
-    // Apply saved settings on load
+    // Apply saved appearance
     const savedTitle = localStorage.getItem("title");
     const savedIcon = localStorage.getItem("icon");
     const savedBg = localStorage.getItem("bg");
@@ -82,6 +101,36 @@
     if (savedTitle) document.title = savedTitle;
     if (savedIcon) document.getElementById("favicon").href = savedIcon;
     if (savedBg) document.body.style.background = savedBg;
+
+    // Apply saved panic settings
+    const panicKey = localStorage.getItem("panicKey");
+    const panicUrl = localStorage.getItem("panicUrl");
+
+    if (panicKey) document.getElementById("panicKey").value = panicKey;
+    if (panicUrl) document.getElementById("panicUrl").value = panicUrl;
+
+    // Panic key listener
+    document.addEventListener("keydown", (e) => {
+      if (!panicKey || !panicUrl) return;
+      if (e.key.toLowerCase() === panicKey.toLowerCase()) {
+        window.location.href = panicUrl;
+      }
+    });
+
+    function savePanic() {
+      const key = document.getElementById("panicKey").value;
+      const url = document.getElementById("panicUrl").value;
+
+      if (!key || !url) {
+        alert("Enter both a key and a URL.");
+        return;
+      }
+
+      localStorage.setItem("panicKey", key);
+      localStorage.setItem("panicUrl", url);
+
+      alert("Panic button saved.");
+    }
 
     function applyPreset(type) {
       if (type === "classroom") {
