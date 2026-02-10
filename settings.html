@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Settings</title>
+<link rel="icon" href="favicon.ico">
+
+<style>
+body {
+  background: #0f172a;
+  color: white;
+  font-family: system-ui, -apple-system;
+  margin: 0;
+  padding: 20px;
+}
+
+h1 {
+  margin-bottom: 20px;
+}
+
+.section {
+  background: #020617;
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+}
+
+button {
+  background: #1e293b;
+  color: white;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin: 6px 6px 0 0;
+}
+
+input {
+  margin-top: 8px;
+  padding: 8px;
+  border-radius: 6px;
+  border: none;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Settings</h1>
+
+<div class="section">
+  <h3>Presets</h3>
+  <button onclick="setPreset('classroom')">Google Classroom</button>
+  <button onclick="setPreset('docs')">Google Docs</button>
+  <button onclick="setPreset('default')">Reset</button>
+</div>
+
+<div class="section">
+  <h3>Custom Background</h3>
+  <input type="color" onchange="setBackground(this.value)">
+</div>
+
+<div class="section">
+  <button onclick="goBack()">Back</button>
+</div>
+
+<script>
+function setPreset(type) {
+  if (type === "classroom") {
+    localStorage.setItem("theme", "#ffffff");
+    localStorage.setItem("favicon", "https://ssl.gstatic.com/classroom/favicon.png");
+    localStorage.setItem("title", "Classes");
+  }
+
+  if (type === "docs") {
+    localStorage.setItem("theme", "#ffffff");
+    localStorage.setItem("favicon", "https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico");
+    localStorage.setItem("title", "Untitled document - Google Docs");
+  }
+
+  if (type === "default") {
+    localStorage.clear();
+  }
+
+  alert("Applied! Reload the calculator.");
+}
+
+function setBackground(color) {
+  localStorage.setItem("theme", color);
+  alert("Background saved!");
+}
+
+function goBack() {
+  window.location.href = "index.html";
+}
+</script>
+
+</body>
+</html>
