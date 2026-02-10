@@ -28,6 +28,8 @@
       display: flex;
       gap: 12px;
       margin-top: 15px;
+      flex-wrap: wrap;
+      justify-content: center;
     }
 
     button {
@@ -43,6 +45,11 @@
     button:hover {
       background: #444;
     }
+
+    .settings {
+      margin-top: 30px;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
@@ -54,12 +61,46 @@
     <button onclick="location.href='chat.html'">💬 Chat</button>
     <button onclick="location.href='search.html'">🔍 Search</button>
   </div>
-    
+
+  <!-- ⚙️ SETTINGS SECTION (ADDED) -->
+  <div class="settings">
+    <h3>Settings</h3>
+
+    <div class="themes">
+      <button onclick="applyPreset('classroom')">Google Classroom</button>
+      <button onclick="applyPreset('docs')">Google Docs</button>
+      <button onclick="applyPreset('default')">Default</button>
+    </div>
+  </div>
 
   <script>
-    function setTheme(title, icon) {
-      document.title = title;
-      document.getElementById("favicon").href = icon;
+    // Apply saved settings on load
+    const savedTitle = localStorage.getItem("title");
+    const savedIcon = localStorage.getItem("icon");
+    const savedBg = localStorage.getItem("bg");
+
+    if (savedTitle) document.title = savedTitle;
+    if (savedIcon) document.getElementById("favicon").href = savedIcon;
+    if (savedBg) document.body.style.background = savedBg;
+
+    function applyPreset(type) {
+      if (type === "classroom") {
+        localStorage.setItem("title", "Classes");
+        localStorage.setItem("icon", "https://ssl.gstatic.com/classroom/favicon.png");
+        localStorage.setItem("bg", "#ffffff");
+      }
+
+      if (type === "docs") {
+        localStorage.setItem("title", "Untitled document - Google Docs");
+        localStorage.setItem("icon", "https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico");
+        localStorage.setItem("bg", "#ffffff");
+      }
+
+      if (type === "default") {
+        localStorage.clear();
+      }
+
+      location.reload();
     }
   </script>
 
