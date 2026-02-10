@@ -1,4 +1,16 @@
 <!DOCTYPE html>
+<link id="dynamicFavicon" rel="icon" href="favicon.ico">
+<script>
+  // Apply saved settings on load
+  const theme = localStorage.getItem("theme");
+  const favicon = localStorage.getItem("favicon");
+  const title = localStorage.getItem("title");
+
+  if (theme) document.body.style.background = theme;
+  if (favicon) document.getElementById("dynamicFavicon").href = favicon;
+  if (title) document.title = title;
+</script>
+
 <html lang="en">
 <<link id="favicon" rel="icon" href="calculator.ico">>
   <meta charset="UTF-8" />
